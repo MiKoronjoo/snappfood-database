@@ -1,6 +1,20 @@
 import re
+import sqlite3
+from typing import List
 
 from entities import *
+
+
+def get_all(table: str, attributes: List[str] = None) -> List[tuple]:
+    con_obj = sqlite3.connect(DB_PATH)
+    if attributes is None:
+        att = '*'
+    else:
+        att = ', '.join(attributes)
+    cursor = con_obj.execute(f'SELECT {att} FROM {table};')
+    selected_table = cursor.fetchall()
+    con_obj.close()
+    return selected_table
 
 
 def check_phone_number_format(phone_number: str) -> bool:
@@ -39,5 +53,10 @@ def signup(phone_number, email, password, first_name, last_name):
     # TODO: check database
 
 
+def admin_signup(username, password):
+    check_username_format(username)
+
+
 if __name__ == '__main__':
-    pass
+    DB_PATH = 'db.sqlite'
+    print(get_all('User', ['"first-name"']))
