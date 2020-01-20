@@ -1,2 +1,4 @@
 class Category:
-    pass
+    def __init__(self, categoryId, name):
+        self.categoryId = categoryId
+        self.name = name
