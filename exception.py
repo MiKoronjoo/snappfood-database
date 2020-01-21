@@ -7,6 +7,14 @@ class FormatError(SnappFoodException):
     pass
 
 
+class SignupError(SnappFoodException):
+    pass
+
+
+class LoginError(SnappFoodException):
+    pass
+
+
 class UsernameFormatError(FormatError):
     pass
 
