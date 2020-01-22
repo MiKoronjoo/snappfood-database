@@ -3,7 +3,9 @@ import re
 from entities.entity import Entity
 from entities.wallet import Wallet
 from entities.address import Address
-from exception import LoginError, EmailIsAlreadyUsed, PhoneNumberFormatError, EmailFormatError, SignupError
+from entities.food import Food
+from exception import LoginError, EmailIsAlreadyUsed, PhoneNumberFormatError, EmailFormatError, SignupError, \
+    NotSameShopError
 
 
 class User(Entity):
@@ -15,6 +17,7 @@ class User(Entity):
         self._email = email
         self._password = password
         self.walletId = walletId
+        self._cart = []
 
     @property
     def first_name(self):
@@ -100,3 +103,15 @@ class User(Entity):
         for address in tbl:
             pl, al, st, ai, ui, li, ci = address
             yield Address(ai, ui, ci, li, st, al, pl)
+
+    def add_to_cart(self, foodId):
+        if self._cart and Food(self._cart[0]).shopId != Food(foodId).shopId:
+            raise NotSameShopError
+        self._cart.append(foodId)
+
+    def clear_cart(self):
+        self._cart.clear()
+
+    @property
+    def cart(self):
+        return [Food(foodId) for foodId in self._cart]

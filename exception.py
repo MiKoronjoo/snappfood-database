@@ -29,3 +29,7 @@ class EmailFormatError(FormatError):
 
 class EmailIsAlreadyUsed(SnappFoodException):
     pass
+
+
+class NotSameShopError(SnappFoodException):
+    pass
