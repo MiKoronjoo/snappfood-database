@@ -2,6 +2,7 @@ import re
 
 from entities.entity import Entity
 from entities.wallet import Wallet
+from entities.address import Address
 from exception import LoginError, EmailIsAlreadyUsed, PhoneNumberFormatError, EmailFormatError, SignupError
 
 
@@ -84,3 +85,18 @@ class User(Entity):
         match = re.match(r'(\w+)([._])?(\w*)@(\w+)(\.(\w+))+', email)
         if not match or match.group() != email:
             raise EmailFormatError
+
+    def add_address(self, cityId, lat, lon, street=None, alley=None, plaque=None):
+        new_address = Address.add(self.userId, cityId, lat, lon)
+        if street is not None:
+            new_address.street = street
+        if alley is not None:
+            new_address.alley = alley
+        if plaque is not None:
+            new_address.plaque = plaque
+
+    def get_addresses(self):
+        tbl = User.select_tuples('Address', ['userId'], [self.userId])
+        for address in tbl:
+            pl, al, st, ai, ui, li, ci = address
+            yield Address(ai, ui, ci, li, st, al, pl)

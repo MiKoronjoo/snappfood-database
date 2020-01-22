@@ -1,3 +1,4 @@
+from entities import City
 from entities.location import Location
 from entities.entity import Entity
 
@@ -16,6 +17,9 @@ class Address(Entity):
     def add(cls, userId, cityId, lat, lon):
         locationId = Location.add(lat, lon)
         cls.insert_tuple('Address', ['userId', 'cityId', 'locationId'], [userId, cityId, locationId])
+        tbl = cls.select_tuples('Address', ['locationId'], [locationId])
+        pl, al, st, ai, ui, li, ci = tbl[-1]
+        return Address(ai, ui, ci, li, st, al, pl)
 
     @property
     def street(self):
@@ -23,7 +27,7 @@ class Address(Entity):
 
     @street.setter
     def street(self, value: str):
-        Address.update_tuple('Address', 'street', value,  f'"addressId" = \'{self.addressId}\'')
+        Address.update_tuple('Address', 'street', value, f'"addressId" = \'{self.addressId}\'')
         self._street = value
 
     @property
@@ -43,3 +47,7 @@ class Address(Entity):
     def plaque(self, value: str):
         Address.update_tuple('Address', 'plaque', value, f'"addressId" = \'{self.addressId}\'')
         self._plaque = value
+
+    def __str__(self):
+        city_name = City(self.cityId).name
+        return f'{city_name}, {self.street}, {self.alley}, {self.plaque}'.replace('null', '')
