@@ -15,7 +15,7 @@ class Shop(Entity):
 
     @property
     def foods(self) -> List[Food]:
-        tbl = Shop.exe_query(f'SELECT foodId FROM Food WHERE shopId = {self.shopId};')
+        tbl = Shop.exe_query(f'SELECT foodId FROM Food WHERE shopId = {self.shopId} ORDER BY categoryId;')
         return [Food(foodId[0]) for foodId in tbl]
 
     @classmethod
