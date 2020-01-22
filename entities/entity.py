@@ -7,6 +7,15 @@ DBTuple = List[str]
 
 class Entity:
     @classmethod
+    def exe_query(cls, query):
+        con_obj = sqlite3.connect(DB_PATH)
+        courser = con_obj.execute(query)
+        res = courser.fetchall()
+        con_obj.commit()
+        con_obj.close()
+        return res
+
+    @classmethod
     def update_tuple(cls, table, attribute, value, condition):
         con_obj = sqlite3.connect(DB_PATH)
         con_obj.execute(f'UPDATE {table} SET "{attribute}" = \'{value}\' WHERE {condition};')

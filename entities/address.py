@@ -1,4 +1,4 @@
-from entities import City
+from entities.city import City
 from entities.location import Location
 from entities.entity import Entity
 
