@@ -12,6 +12,7 @@ class Entity:
         con_obj.execute(f'UPDATE {table} SET "{attribute}" = \'{value}\' WHERE {condition};')
         con_obj.commit()
         con_obj.close()
+
     @classmethod
     def insert_tuple(cls, table: str, attributes: DBTuple, values: DBTuple) -> None:
         con_obj = sqlite3.connect(DB_PATH)

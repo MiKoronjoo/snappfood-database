@@ -25,3 +25,7 @@ class PhoneNumberFormatError(FormatError):
 
 class EmailFormatError(FormatError):
     pass
+
+
+class EmailIsAlreadyUsed(SnappFoodException):
+    pass
