@@ -1,3 +1,6 @@
+from typing import List
+
+from entities.food import Food
 from entities.entity import Entity
 
 
@@ -9,6 +12,11 @@ class Shop(Entity):
         self.minimum_bill_value = tbl[2]
         self.shopId = tbl[3]
         self.addressId = tbl[4]
+
+    @property
+    def foods(self) -> List[Food]:
+        tbl = Shop.exe_query(f'SELECT foodId FROM Food WHERE shopId = {self.shopId};')
+        return [Food(foodId[0]) for foodId in tbl]
 
     @classmethod
     def add(cls, name, addressId, minimum_bill_value=0):
