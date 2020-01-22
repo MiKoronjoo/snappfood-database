@@ -1,3 +1,4 @@
+from entities.user import User
 from entities.entity import Entity
 
 
@@ -11,3 +12,8 @@ class Invoice(Entity):
         self.statusId = tbl[2]
         self.commentId = tbl[3]
         self.discountId = tbl[4]
+        tbl = Invoice.exe_query(f'SELECT userId From Wallet WHERE walletId = {walletId};')
+        this_user = User(tbl[0][0])
+        for foodId in this_user.cart:
+            Invoice.insert_tuple('IsInInvoice', ['foodId', 'invoiceId'], [foodId, self.invoiceId])
+        this_user.clear_cart()

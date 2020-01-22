@@ -9,15 +9,15 @@ from exception import LoginError, EmailIsAlreadyUsed, PhoneNumberFormatError, Em
 
 
 class User(Entity):
-    def __init__(self, userId, first_name, last_name, phone_number, email, password, walletId):
-        self.userId = userId
-        self._first_name = first_name
-        self._last_name = last_name
-        self.phone_number = phone_number
-        self._email = email
-        self._password = password
-        self.walletId = walletId
-        self._cart = []
+    def __init__(self, userId):
+        tbl = User.select_tuples('User', ['userId'], [userId])[0]
+        self._first_name = tbl[0]
+        self._last_name = tbl[1]
+        self.phone_number = tbl[2]
+        self._email = tbl[3]
+        self._password = tbl[4]
+        self.userId = tbl[5]
+        self.walletId = tbl[6]
 
     @property
     def first_name(self):
@@ -74,8 +74,7 @@ class User(Entity):
         this_user = cls.select_tuples('User', ['phone-number', 'password'], [phone_number, password])
         if not this_user:
             raise LoginError('Invalid username or password.')
-        fn, ln, pn, em, pw, ui, wi = this_user[0]
-        return User(ui, fn, ln, pn, em, pw, wi)
+        return User(this_user[0][5])
 
     @classmethod
     def check_phone_number_format(cls, phone_number: str) -> None:
@@ -105,13 +104,14 @@ class User(Entity):
             yield Address(ai, ui, ci, li, st, al, pl)
 
     def add_to_cart(self, foodId):
-        if self._cart and Food(self._cart[0]).shopId != Food(foodId).shopId:
+        if self.cart and Food(self.cart[0]).shopId != Food(foodId).shopId:
             raise NotSameShopError
-        self._cart.append(foodId)
+        User.insert_tuple('IsInCart', ['userId', 'foodId'], [self.userId, foodId])
 
     def clear_cart(self):
-        self._cart.clear()
+        User.exe_query(f'DELETE FROM IsInCart WHERE userId = {self.userId};')
 
     @property
     def cart(self):
-        return [Food(foodId) for foodId in self._cart]
+        tbl = User.select_tuples('IsInCart', ['userId'], [self.userId])
+        return [x[1] for x in tbl]  # list of foodId
