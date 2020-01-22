@@ -40,17 +40,17 @@ def login(username, password, is_admin=False):
         Admin.login(username, password)
     else:
         check_phone_number_format(username)
-        User.login(username, password)
+        this_user = User.login(username, password)
+        return this_user
 
 
-def signup(phone_number: str, email: str, password: str, first_name: str, last_name: str):
+def signup(phone_number: str, password: str):
     check_phone_number_format(phone_number)
-    check_email_format(email)
     if is_in_db(phone_number, 'User', 'phone-number'):
         raise SignupError('Phone number is already used.')
-    if is_in_db(email, 'User', 'email'):
-        raise SignupError('Email is already used.')
-    User.add(first_name, last_name, phone_number, email, password)
+    # if is_in_db(email, 'User', 'email'):
+    #     raise SignupError('Email is already used.')
+    User.add(phone_number, password)
 
 
 def admin_signup(username, password):
@@ -66,3 +66,4 @@ if __name__ == '__main__':
     # login('09171767788', 'ppargregrgra')
     # admin_signup('mikor', 'hassan')
     # login('mikor', 'hassan', True)
+    # login('09777777747', 'd7d@bfdg.fd')
