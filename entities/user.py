@@ -62,6 +62,5 @@ class User(Entity):
         this_user = cls.select_tuples('User', ['phone-number', 'password'], [phone_number, password])
         if not this_user:
             raise LoginError('Invalid username or password.')
-        print(this_user[0])
         fn, ln, pn, em, pw, ui, wi = this_user[0]
         return User(ui, fn, ln, pn, em, pw, wi)
