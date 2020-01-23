@@ -33,3 +33,11 @@ class EmailIsAlreadyUsed(SnappFoodException):
 
 class NotSameShopError(SnappFoodException):
     pass
+
+
+class CartIsEmptyError(SnappFoodException):
+    pass
+
+
+class InvalidDiscountError(SnappFoodException):
+    pass

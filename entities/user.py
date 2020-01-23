@@ -1,11 +1,12 @@
 import re
 
+from entities.invoice import Invoice
 from entities.entity import Entity
 from entities.wallet import Wallet
 from entities.address import Address
 from entities.food import Food
 from exception import LoginError, EmailIsAlreadyUsed, PhoneNumberFormatError, EmailFormatError, SignupError, \
-    NotSameShopError
+    NotSameShopError, CartIsEmptyError, InvalidDiscountError
 
 
 class User(Entity):
@@ -61,7 +62,8 @@ class User(Entity):
             raise SignupError('Phone number is already used.')
         cls.insert_tuple('User', ['phone-number', 'password'], [phone_number, password])
         userId = cls.get_user_id(phone_number)
-        Wallet.add(userId)
+        wallet = Wallet(userId)
+        cls.update_tuple('User', 'walletId', wallet.walletId, f'"userId" = \'{userId}\'')
 
     @classmethod
     def get_user_id(cls, phone_number):
@@ -115,3 +117,16 @@ class User(Entity):
     def cart(self):
         tbl = User.select_tuples('IsInCart', ['userId'], [self.userId])
         return [x[1] for x in tbl]  # list of foodId
+
+    def finalize_the_purchase(self, addressId, discount_text=None):
+        if not self.cart:
+            raise CartIsEmptyError
+        discountId = None
+        if discount_text:
+            tbl = User.exe_query(
+                'SELECT DC.discountId FROM Discount JOIN DiscountCode DC ON Discount.discountId = DC.discountId '
+                f'WHERE DC.userId = {self.userId};')
+            if not tbl:
+                raise InvalidDiscountError
+            discountId = tbl[0][0]
+        Invoice.add(addressId, self.walletId, discountId)
