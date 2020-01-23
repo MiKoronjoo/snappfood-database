@@ -28,3 +28,10 @@ class Invoice(Entity):
         for foodId in this_user.cart:
             Invoice.insert_tuple('IsInInvoice', ['foodId', 'invoiceId'], [foodId, invoiceId])
         this_user.clear_cart()
+
+    @property
+    def cost(self):
+        tbl = Invoice.exe_query('SELECT price, discount FROM Food JOIN IsInInvoice III ON Food.foodId = III.foodId '
+                                'JOIN Invoice I on III.invoiceId = I.invoiceId '
+                                f'WHERE I.invoiceId = {self.invoiceId};')
+        return sum(x[0] * (100 - x[1]) / 100 for x in tbl)
