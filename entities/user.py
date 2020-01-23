@@ -140,3 +140,8 @@ class User(Entity):
     def comment(self, discountId, rate: int, text: str):
         commentId = Comment.add(rate, text)
         User.update_tuple('Invoice', 'commentId', commentId, f'discountId = {discountId}')
+
+    def get_status(self, invoiceId):
+        tbl = User.exe_query('SELECT name FROM Status JOIN Invoice I ON Status.statusId = I.statusId '
+                             f'WHERE I.invoiceId = {invoiceId};')
+        return tbl[0][0]
