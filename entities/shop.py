@@ -18,6 +18,15 @@ class Shop(Entity):
         tbl = Shop.exe_query(f'SELECT foodId FROM Food WHERE shopId = {self.shopId} ORDER BY categoryId;')
         return [Food(foodId[0]) for foodId in tbl]
 
+    @property
+    def rate(self):
+        tbl = Shop.exe_query('SELECT avg(rate) FROM Comment C JOIN Invoice I on C.commentId = I.commentId '
+                             'JOIN IsInInvoice III on I.invoiceId = III.invoiceId '
+                             'JOIN Food F on III.foodId = F.foodId '
+                             'JOIN Shop S on F.shopId = S.shopId '
+                             f'WHERE S.shopId = {self.shopId} GROUP BY rate;')
+        return tbl[0][0]
+
     @classmethod
     def add(cls, name, addressId, minimum_bill_value=0):
         cls.insert_tuple('Shop', ['name', 'addressId', 'minimum-bill-value'],
