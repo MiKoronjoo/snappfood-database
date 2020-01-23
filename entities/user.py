@@ -1,5 +1,6 @@
 import re
 
+from entities.comment import Comment
 from entities.invoice import Invoice
 from entities.entity import Entity
 from entities.wallet import Wallet
@@ -130,3 +131,12 @@ class User(Entity):
                 raise InvalidDiscountError
             discountId = tbl[0][0]
         Invoice.add(addressId, self.walletId, discountId)
+
+    @property
+    def invoices(self):
+        tbl = User.select_tuples('Invoice', ['userId'], [self.userId])
+        return [Invoice(ii[5]) for ii in tbl]
+
+    def comment(self, discountId, rate: int, text: str):
+        commentId = Comment.add(rate, text)
+        User.update_tuple('Invoice', 'commentId', commentId, f'discountId = {discountId}')
