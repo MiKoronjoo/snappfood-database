@@ -145,3 +145,11 @@ class User(Entity):
         tbl = User.exe_query('SELECT name FROM Status JOIN Invoice I ON Status.statusId = I.statusId '
                              f'WHERE I.invoiceId = {invoiceId};')
         return tbl[0][0]
+
+    def previous_foods(self, shopId):
+        tbl = User.exe_query('SELECT F.foodId FROM Shop S JOIN Food F ON S.shopId = F.shopId '
+                             'JOIN IsInInvoice III ON F.foodId = III.foodId '
+                             'JOIN Invoice I ON III.invoiceId = I.invoiceId '
+                             'JOIN Wallet W on I.walletId = W.walletId '
+                             f'WHERE W.userId = {self.userId} AND S.shopId = {shopId};')
+        return [x[0] for x in tbl]  # list of foodIds
