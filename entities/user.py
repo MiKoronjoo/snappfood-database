@@ -119,11 +119,11 @@ class User(Entity):
         tbl = User.select_tuples('IsInCart', ['userId'], [self.userId])
         return [x[1] for x in tbl]  # list of foodId
 
-    def finalize_the_purchase(self, addressId, discount_text=None):
+    def finalize_the_purchase(self, addressId, discount_code=None):
         if not self.cart:
             raise CartIsEmptyError
         discountId = None
-        if discount_text:
+        if discount_code:
             tbl = User.exe_query(
                 'SELECT DC.discountId FROM Discount JOIN DiscountCode DC ON Discount.discountId = DC.discountId '
                 f'WHERE DC.userId = {self.userId};')
