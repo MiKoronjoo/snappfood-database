@@ -62,6 +62,7 @@ class User(Entity):
         from entities.wallet import Wallet
         wallet = Wallet(userId)
         cls.update_tuple('User', 'walletId', wallet.walletId, f'"userId" = \'{userId}\'')
+        return cls.get_user_id(phone_number)
 
     @classmethod
     def get_user_id(cls, phone_number):
@@ -75,7 +76,7 @@ class User(Entity):
         this_user = cls.select_tuples('User', ['phone-number', 'password'], [phone_number, password])
         if not this_user:
             raise LoginError('Invalid username or password.')
-        return User(this_user[0][5])
+        return this_user[0][5]
 
     @classmethod
     def check_phone_number_format(cls, phone_number: str) -> None:
@@ -101,10 +102,11 @@ class User(Entity):
             new_address.plaque = plaque
 
     def get_addresses(self):
+        from entities.address import Address
         tbl = User.select_tuples('Address', ['userId'], [self.userId])
         for address in tbl:
             pl, al, st, ai, ui, li, ci = address
-            yield ai
+            yield Address(ai)
 
     def add_to_cart(self, foodId):
         from entities.food import Food
