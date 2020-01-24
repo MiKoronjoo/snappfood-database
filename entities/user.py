@@ -71,6 +71,7 @@ class User(Entity):
 
     @classmethod
     def login(cls, phone_number, password):
+        cls.check_phone_number_format(phone_number)
         this_user = cls.select_tuples('User', ['phone-number', 'password'], [phone_number, password])
         if not this_user:
             raise LoginError('Invalid username or password.')
@@ -78,8 +79,6 @@ class User(Entity):
 
     @classmethod
     def check_phone_number_format(cls, phone_number: str) -> None:
-        print(phone_number)
-        print(type(phone_number))
         match = re.match(r'09\d{9}', phone_number)
         if not match or match.group() != phone_number:
             raise PhoneNumberFormatError

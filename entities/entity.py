@@ -45,7 +45,6 @@ class Entity:
 
     @classmethod
     def select_tuples(cls, table: str, attributes: DBTuple, values: DBTuple) -> List[tuple]:
-        print(DB_PATH)
         con_obj = sqlite3.connect(DB_PATH)
         if not attributes or not values:
             condition = '1 = 1'

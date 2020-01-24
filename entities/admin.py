@@ -24,6 +24,7 @@ class Admin(Entity):
 
     @classmethod
     def login(cls, username, password):
+        cls.check_username_format(username)
         this_user = cls.select_tuples('Admin', ['username', 'password'], [username, password])
         if not this_user:
             raise LoginError('Invalid username or password.')
