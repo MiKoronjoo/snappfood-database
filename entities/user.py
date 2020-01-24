@@ -167,16 +167,18 @@ class User(Entity):
                              f'WHERE W.userId = {self.userId} AND S.shopId = {shopId};')
         return [x[0] for x in tbl]  # list of foodIds
 
-    def search_shops(self, addressId, categoryId=None):
+    def search_shops(self, name='', addressId=None, categoryId=None):
+        af = ''
         cf = ''
+        if addressId is not None:
+            li = Address(addressId).locationId
+            loc = Location(li)
+            af = f' AND ABS(lat - {loc.lat}) < 100 AND ABS(lon - {loc.lon}) < 100'
         if categoryId is not None:
-            cf = f'AND C.categoryId = {categoryId}'
-        li = Address(addressId).locationId
-        loc = Location(li)
+            cf = f' AND C.categoryId = {categoryId}'
         tbl = User.exe_query('SELECT S.shopId FROM Shop S JOIN Address A ON S.addressId = A.addressId '
                              'JOIN Location L ON A.locationId = L.locationId '
-                             'JOIN Food F on S.shopId = F.shopId '
-                             'JOIN Category C on F.categoryId = C.categoryId '
-                             f'WHERE ABS(lat - {loc.lat}) < 100 AND ABS(lon - {loc.lon}) < 100 '
-                             f'{cf};')
-        return [x[0] for x in tbl]
+                             'JOIN Food F On S.shopId = F.shopId '
+                             'JOIN Category C ON F.categoryId = C.categoryId '
+                             f'WHERE S.name LIKE \'%{name}%\'{af}{cf};')
+        return [x[0] for x in tbl]  # list of shopIds
