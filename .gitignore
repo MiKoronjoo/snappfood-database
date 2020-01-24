@@ -130,4 +130,5 @@ dmypy.json
 
 # IDE files
 .idea/
-.code/
+.vscode/
+db.sqlite
