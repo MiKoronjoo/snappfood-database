@@ -7,7 +7,7 @@ from entities.wallet import Wallet
 from entities.address import Address
 from entities.food import Food
 from exception import LoginError, EmailIsAlreadyUsed, PhoneNumberFormatError, EmailFormatError, SignupError, \
-    NotSameShopError, CartIsEmptyError, InvalidDiscountError
+    NotSameShopError, CartIsEmptyError, InvalidDiscountError, MinBillValueError
 
 
 class User(Entity):
@@ -119,9 +119,20 @@ class User(Entity):
         tbl = User.select_tuples('IsInCart', ['userId'], [self.userId])
         return [x[1] for x in tbl]  # list of foodId
 
+    def check_minimum_bill_value(self):
+        tbl = User.exe_query('SELECT price, discount FROM Food JOIN IsInCart IIC ON Food.foodId = IIC.foodId '
+                             f'WHERE IIC.userId = {self.userId};')
+        bill_value = sum(x[0] * (100 - x[1]) / 100 for x in tbl)
+        tbl = User.exe_query('SELECT "minimum-bill-value" FROM Shop JOIN Food F ON Shop.shopId = F.shopId '
+                             'JOIN IsInCart IIC ON F.foodId = IIC.foodId '
+                             f'WHERE IIC.userId = {self.userId};')
+        if bill_value < tbl[0][0]:
+            raise MinBillValueError
+
     def finalize_the_purchase(self, addressId, discount_code=None):
         if not self.cart:
             raise CartIsEmptyError
+        self.check_minimum_bill_value()
         discountId = None
         if discount_code:
             tbl = User.exe_query(

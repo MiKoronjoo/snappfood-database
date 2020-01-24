@@ -41,3 +41,7 @@ class CartIsEmptyError(SnappFoodException):
 
 class InvalidDiscountError(SnappFoodException):
     pass
+
+
+class MinBillValueError(SnappFoodException):
+    pass

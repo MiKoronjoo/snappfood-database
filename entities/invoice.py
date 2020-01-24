@@ -34,4 +34,4 @@ class Invoice(Entity):
         tbl = Invoice.exe_query('SELECT price, discount FROM Food JOIN IsInInvoice III ON Food.foodId = III.foodId '
                                 'JOIN Invoice I on III.invoiceId = I.invoiceId '
                                 f'WHERE I.invoiceId = {self.invoiceId};')
-        return sum(x[0] * (100 - x[1]) / 100 for x in tbl)
+        return sum(x[0] * (100 - x[1]) / 100 for x in tbl)  # TODO: Apply the Discount
