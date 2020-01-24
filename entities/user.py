@@ -183,7 +183,10 @@ class User(Entity):
                              f"WHERE S.name LIKE '%{name}%'{af}{cf};")
         return [x[0] for x in tbl]  # list of shopIds
 
-    def search_food_category(self, cat_name):
-        tbl = User.exe_query("SELECT foodId FROM Food JOIN Category C ON Food.categoryId = C.categoryId "
-                             f"WHERE C.name LIKE '%{cat_name}%';")
-        return [x[0] for x in tbl]  # list of foodIds
+    def search_foods(self, name='', categoryId=None):
+        pass
+
+    def search_categories(self, name=''):
+        tbl = User.exe_query("SELECT categoryId FROM Category "
+                             f"WHERE name LIKE '%{name}%';")
+        return [x[0] for x in tbl]  # list of categoryId
