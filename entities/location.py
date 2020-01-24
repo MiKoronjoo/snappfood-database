@@ -4,10 +4,11 @@ from entities.entity import Entity
 
 
 class Location(Entity):
-    def __init__(self, locationId, lat, lon):
-        self.locationId = locationId
-        self.lat = lat
-        self.lon = lon
+    def __init__(self, locationId):
+        tbl = Location.select_tuples('Location', ['locationId'], [locationId])[0]
+        self.locationId = tbl[2]
+        self.lat = tbl[1]
+        self.lon = tbl[0]
 
     @classmethod
     def add(cls, lat: float, lon: float):

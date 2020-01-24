@@ -4,22 +4,22 @@ from entities.entity import Entity
 
 
 class Address(Entity):
-    def __init__(self, addressId, userId, cityId, locationId, street=None, alley=None, plaque=None):
-        self.addressId = addressId
-        self.userId = userId
-        self.cityId = cityId
-        self.locationId = locationId
-        self._street = street
-        self._alley = alley
-        self._plaque = plaque
+    def __init__(self, addressId):
+        tbl = Address.select_tuples('Address', ['addressId'], [addressId])[0]
+        self.addressId = tbl[3]
+        self.userId = tbl[4]
+        self.cityId = tbl[6]
+        self.locationId = tbl[5]
+        self._street = tbl[2]
+        self._alley = tbl[1]
+        self._plaque = tbl[0]
 
     @classmethod
     def add(cls, userId, cityId, lat, lon):
         locationId = Location.add(lat, lon)
         cls.insert_tuple('Address', ['userId', 'cityId', 'locationId'], [userId, cityId, locationId])
         tbl = cls.select_tuples('Address', ['locationId'], [locationId])
-        pl, al, st, ai, ui, li, ci = tbl[-1]
-        return Address(ai, ui, ci, li, st, al, pl)
+        return tbl[-1][3]  # addressId
 
     @property
     def street(self):

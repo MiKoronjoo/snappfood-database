@@ -1,5 +1,6 @@
 import re
 
+from entities.location import Location
 from entities.comment import Comment
 from entities.invoice import Invoice
 from entities.entity import Entity
@@ -92,7 +93,8 @@ class User(Entity):
             raise EmailFormatError
 
     def add_address(self, cityId, lat, lon, street=None, alley=None, plaque=None):
-        new_address = Address.add(self.userId, cityId, lat, lon)
+        addressId = Address.add(self.userId, cityId, lat, lon)
+        new_address = Address(addressId)
         if street is not None:
             new_address.street = street
         if alley is not None:
@@ -104,7 +106,7 @@ class User(Entity):
         tbl = User.select_tuples('Address', ['userId'], [self.userId])
         for address in tbl:
             pl, al, st, ai, ui, li, ci = address
-            yield Address(ai, ui, ci, li, st, al, pl)
+            yield ai
 
     def add_to_cart(self, foodId):
         if self.cart and Food(self.cart[0]).shopId != Food(foodId).shopId:
@@ -164,3 +166,17 @@ class User(Entity):
                              'JOIN Wallet W on I.walletId = W.walletId '
                              f'WHERE W.userId = {self.userId} AND S.shopId = {shopId};')
         return [x[0] for x in tbl]  # list of foodIds
+
+    def search_shops(self, addressId, categoryId=None):
+        cf = ''
+        if categoryId is not None:
+            cf = f'AND C.categoryId = {categoryId}'
+        li = Address(addressId).locationId
+        loc = Location(li)
+        tbl = User.exe_query('SELECT S.shopId FROM Shop S JOIN Address A ON S.addressId = A.addressId '
+                             'JOIN Location L ON A.locationId = L.locationId '
+                             'JOIN Food F on S.shopId = F.shopId '
+                             'JOIN Category C on F.categoryId = C.categoryId '
+                             f'WHERE ABS(lat - {loc.lat}) < 100 AND ABS(lon - {loc.lon}) < 100 '
+                             f'{cf};')
+        return [x[0] for x in tbl]
