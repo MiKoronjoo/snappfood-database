@@ -184,7 +184,12 @@ class User(Entity):
         return [x[0] for x in tbl]  # list of shopIds
 
     def search_foods(self, name='', categoryId=None):
-        pass
+        cf = ''
+        if categoryId is not None:
+            cf = f' AND categoryId = {categoryId}'
+        tbl = User.exe_query("SELECT foodId FROM Food "
+                             f"WHERE name LIKE '%{name}%'{cf};")
+        return [x[0] for x in tbl]  # list of foodIds
 
     def search_categories(self, name=''):
         tbl = User.exe_query("SELECT categoryId FROM Category "
