@@ -176,9 +176,14 @@ class User(Entity):
             af = f' AND ABS(lat - {loc.lat}) < 100 AND ABS(lon - {loc.lon}) < 100'
         if categoryId is not None:
             cf = f' AND C.categoryId = {categoryId}'
-        tbl = User.exe_query('SELECT S.shopId FROM Shop S JOIN Address A ON S.addressId = A.addressId '
-                             'JOIN Location L ON A.locationId = L.locationId '
-                             'JOIN Food F On S.shopId = F.shopId '
-                             'JOIN Category C ON F.categoryId = C.categoryId '
-                             f'WHERE S.name LIKE \'%{name}%\'{af}{cf};')
+        tbl = User.exe_query("SELECT S.shopId FROM Shop S JOIN Address A ON S.addressId = A.addressId "
+                             "JOIN Location L ON A.locationId = L.locationId "
+                             "JOIN Food F On S.shopId = F.shopId "
+                             "JOIN Category C ON F.categoryId = C.categoryId "
+                             f"WHERE S.name LIKE '%{name}%'{af}{cf};")
         return [x[0] for x in tbl]  # list of shopIds
+
+    def search_food_category(self, cat_name):
+        tbl = User.exe_query("SELECT foodId FROM Food JOIN Category C ON Food.categoryId = C.categoryId "
+                             f"WHERE C.name LIKE '%{cat_name}%';")
+        return [x[0] for x in tbl]  # list of foodIds
