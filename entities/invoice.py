@@ -1,4 +1,3 @@
-from entities.user import User
 from entities.entity import Entity
 
 
@@ -24,6 +23,7 @@ class Invoice(Entity):
             tbl = Invoice.select_tuples('Invoice', ['addressId', 'walletId', 'statusId'], [addressId, walletId, 1])[-1]
         invoiceId = tbl[5]
         tbl = Invoice.exe_query(f'SELECT userId From Wallet WHERE walletId = {walletId};')
+        from entities.user import User
         this_user = User(tbl[0][0])
         for foodId in this_user.cart:
             Invoice.insert_tuple('IsInInvoice', ['foodId', 'invoiceId'], [foodId, invoiceId])

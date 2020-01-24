@@ -1,12 +1,7 @@
 import re
 
-from entities.location import Location
-from entities.comment import Comment
-from entities.invoice import Invoice
 from entities.entity import Entity
-from entities.wallet import Wallet
-from entities.address import Address
-from entities.food import Food
+
 from exception import LoginError, EmailIsAlreadyUsed, PhoneNumberFormatError, EmailFormatError, SignupError, \
     NotSameShopError, CartIsEmptyError, InvalidDiscountError, MinBillValueError
 
@@ -64,6 +59,7 @@ class User(Entity):
             raise SignupError('Phone number is already used.')
         cls.insert_tuple('User', ['phone-number', 'password'], [phone_number, password])
         userId = cls.get_user_id(phone_number)
+        from entities.wallet import Wallet
         wallet = Wallet(userId)
         cls.update_tuple('User', 'walletId', wallet.walletId, f'"userId" = \'{userId}\'')
 
@@ -82,6 +78,8 @@ class User(Entity):
 
     @classmethod
     def check_phone_number_format(cls, phone_number: str) -> None:
+        print(phone_number)
+        print(type(phone_number))
         match = re.match(r'09\d{9}', phone_number)
         if not match or match.group() != phone_number:
             raise PhoneNumberFormatError
@@ -93,6 +91,7 @@ class User(Entity):
             raise EmailFormatError
 
     def add_address(self, cityId, lat, lon, street=None, alley=None, plaque=None):
+        from entities.address import Address
         addressId = Address.add(self.userId, cityId, lat, lon)
         new_address = Address(addressId)
         if street is not None:
@@ -109,6 +108,7 @@ class User(Entity):
             yield ai
 
     def add_to_cart(self, foodId):
+        from entities.food import Food
         if self.cart and Food(self.cart[0]).shopId != Food(foodId).shopId:
             raise NotSameShopError
         User.insert_tuple('IsInCart', ['userId', 'foodId'], [self.userId, foodId])
@@ -143,14 +143,17 @@ class User(Entity):
             if not tbl:
                 raise InvalidDiscountError
             discountId = tbl[0][0]
+        from entities.invoice import Invoice
         Invoice.add(addressId, self.walletId, discountId)
 
     @property
     def invoices(self):
+        from entities.invoice import Invoice
         tbl = User.select_tuples('Invoice', ['userId'], [self.userId])
         return [Invoice(ii[5]) for ii in tbl]
 
     def comment(self, discountId, rate: int, text: str):
+        from entities.comment import Comment
         commentId = Comment.add(rate, text)
         User.update_tuple('Invoice', 'commentId', commentId, f'discountId = {discountId}')
 
@@ -171,6 +174,8 @@ class User(Entity):
         af = ''
         cf = ''
         if addressId is not None:
+            from entities.address import Address
+            from entities.location import Location
             li = Address(addressId).locationId
             loc = Location(li)
             af = f' AND ABS(lat - {loc.lat}) < 100 AND ABS(lon - {loc.lon}) < 100'

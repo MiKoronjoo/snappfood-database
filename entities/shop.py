@@ -1,6 +1,5 @@
 from typing import List
 
-from entities.food import Food
 from entities.entity import Entity
 
 
@@ -14,7 +13,8 @@ class Shop(Entity):
         self.addressId = tbl[4]
 
     @property
-    def foods(self) -> List[Food]:
+    def foods(self):
+        from entities.food import Food
         tbl = Shop.exe_query(f'SELECT foodId FROM Food WHERE shopId = {self.shopId} ORDER BY categoryId;')
         return [Food(foodId[0]) for foodId in tbl]
 

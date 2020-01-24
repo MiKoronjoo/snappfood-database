@@ -1,7 +1,7 @@
 import sqlite3
 from typing import List
 
-DB_PATH = 'db.sqlite'
+DB_PATH = '../db.sqlite'
 DBTuple = List[str]
 
 
@@ -45,6 +45,7 @@ class Entity:
 
     @classmethod
     def select_tuples(cls, table: str, attributes: DBTuple, values: DBTuple) -> List[tuple]:
+        print(DB_PATH)
         con_obj = sqlite3.connect(DB_PATH)
         if not attributes or not values:
             condition = '1 = 1'
