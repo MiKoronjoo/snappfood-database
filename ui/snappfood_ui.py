@@ -3,16 +3,127 @@
 # Created by: PyQt5 UI code generator 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
-import os
-import time
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import entities
 import exception
 
+class Ui_infoWindow(object):
+    def show_MainWindow(self):
+        self.ui = Ui_MainWindow()
+        self.ui.user = self.user
+        self.ui.setupUi(LoginWindow)
+        LoginWindow.show()
+
+    def edit_info(self):
+        try:
+            self.user.first_name = self.lineEdit.text()
+            self.user.last_name = self.lineEdit_2.text()
+            self.user.email = self.lineEdit_4.text()
+            self.message.setText('اطلاعات با موفقیت ویرایش شد')
+        except exception.EmailFormatError:
+            self.message.setText('فرمت ایمیل اشتباه است')
+        except exception.EmailIsAlreadyUsed:
+            self.message.setText('این ایمیل قبلا استفاده شده')
+
+    def change_pw(self):
+        self.user.change_password(self.lineEdit_5.text())
+        self.message.setText('رمز عبور با موفقیت تغییر کرد')
+
+    def setupUi(self, infoWindow):
+        infoWindow.setObjectName("infoWindow")
+        infoWindow.resize(580, 410)
+        self.centralwidget = QtWidgets.QWidget(infoWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit.setGeometry(QtCore.QRect(340, 80, 151, 25))
+        self.lineEdit.setObjectName("lineEdit")
+        self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_2.setGeometry(QtCore.QRect(180, 80, 151, 25))
+        self.lineEdit_2.setText("")
+        self.lineEdit_2.setObjectName("lineEdit_2")
+        self.lineEdit_3 = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_3.setEnabled(False)
+        self.lineEdit_3.setGeometry(QtCore.QRect(90, 140, 151, 25))
+        self.lineEdit_3.setObjectName("lineEdit_3")
+        self.lineEdit_4 = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_4.setGeometry(QtCore.QRect(250, 140, 241, 25))
+        self.lineEdit_4.setText("")
+        self.lineEdit_4.setObjectName("lineEdit_4")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(420, 60, 67, 17))
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(236, 60, 91, 20))
+        self.label_2.setObjectName("label_2")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(400, 120, 91, 20))
+        self.label_3.setObjectName("label_3")
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setGeometry(QtCore.QRect(150, 120, 91, 20))
+        self.label_4.setObjectName("label_4")
+        self.lineEdit_5 = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_5.setEnabled(True)
+        self.lineEdit_5.setGeometry(QtCore.QRect(240, 290, 151, 25))
+        self.lineEdit_5.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.lineEdit_5.setText("")
+        self.lineEdit_5.setEchoMode(QtWidgets.QLineEdit.PasswordEchoOnEdit)
+        self.lineEdit_5.setObjectName("lineEdit_5")
+        self.label_5 = QtWidgets.QLabel(self.centralwidget)
+        self.label_5.setGeometry(QtCore.QRect(400, 290, 91, 20))
+        self.label_5.setObjectName("label_5")
+        self.chpwBT = QtWidgets.QPushButton(self.centralwidget)
+        self.chpwBT.setGeometry(QtCore.QRect(140, 290, 89, 25))
+        self.chpwBT.setObjectName("chpwBT")
+        self.editBT = QtWidgets.QPushButton(self.centralwidget)
+        self.editBT.setGeometry(QtCore.QRect(250, 200, 89, 25))
+        self.editBT.setObjectName("editBT")
+        self.backLB = QtWidgets.QCommandLinkButton(self.centralwidget)
+        self.backLB.setGeometry(QtCore.QRect(20, 330, 91, 31))
+        self.backLB.setObjectName("backLB")
+        infoWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(infoWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 580, 22))
+        self.menubar.setObjectName("menubar")
+        infoWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(infoWindow)
+        self.statusbar.setObjectName("statusbar")
+        infoWindow.setStatusBar(self.statusbar)
+        self.message = QtWidgets.QLabel(self.centralwidget)
+        self.message.setGeometry(QtCore.QRect(180, 340, 211, 20))
+        self.message.setAlignment(QtCore.Qt.AlignCenter)
+        self.message.setObjectName("message")
+
+        self.retranslateUi(infoWindow)
+        self.chpwBT.clicked.connect(self.change_pw)
+        self.editBT.clicked.connect(self.edit_info)
+        self.backLB.clicked.connect(self.show_MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(infoWindow)
+
+    def retranslateUi(self, infoWindow):
+        _translate = QtCore.QCoreApplication.translate
+        infoWindow.setWindowTitle(_translate("infoWindow", "اطلاعات من"))
+        self.lineEdit.setText(_translate("infoWindow", self.user.first_name))
+        self.lineEdit_2.setText(_translate("infoWindow", self.user.last_name))
+        self.lineEdit_4.setText(_translate("infoWindow", self.user.email))
+        self.lineEdit_3.setText(_translate("infoWindow", self.user.phone_number))
+        self.label.setText(_translate("infoWindow", "نام"))
+        self.label_2.setText(_translate("infoWindow", "نام خانوادگی"))
+        self.label_3.setText(_translate("infoWindow", "ایمیل"))
+        self.label_4.setText(_translate("infoWindow", "شماره همراه"))
+        self.label_5.setText(_translate("infoWindow", "تغییر رمز عبور:"))
+        self.chpwBT.setText(_translate("infoWindow", "تایید"))
+        self.editBT.setText(_translate("infoWindow", "ویرایش"))
+        self.backLB.setText(_translate("infoWindow", "بازگشت"))
+
 
 class Ui_MainWindow(object):
+    def show_infoWindow(self):
+        self.ui = Ui_infoWindow()
+        self.ui.user = self.user
+        self.ui.setupUi(LoginWindow)
+        LoginWindow.show()
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -93,7 +204,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
-        self.infoAct.triggered.connect(MainWindow.close)
+        self.infoAct.triggered.connect(self.show_infoWindow)
         self.addressAct.triggered.connect(MainWindow.close)
         self.commentAct.triggered.connect(MainWindow.close)
         self.ordersAct.triggered.connect(MainWindow.close)
@@ -195,7 +306,6 @@ def login():
     try:
         userId = entities.User.login(ui.phText.text(), ui.pwText.text())
         ui.message.setText('با موفقیت وارد شدید')
-        time.sleep(1)
         ui.show_MainWindow(userId)
     except exception.LoginError:
         ui.message.setText('شماره همراه یا رمز عبور اشتباه است')
@@ -207,7 +317,6 @@ def signup():
     try:
         userId = entities.User.add(ui.phText.text(), ui.pwText.text())
         ui.message.setText('با موفقیت ثبت نام شدید')
-        time.sleep(1)
         ui.show_MainWindow(userId)
     except exception.SignupError:
         ui.message.setText('شماره همراه قبلا استفاده شده')
