@@ -202,6 +202,14 @@ class User(Entity):
                              f"WHERE name LIKE '%{name}%';")
         return [x[0] for x in tbl]  # list of categoryIds
 
+    @property
     def favorite_shops(self):
         tbl = User.exe_query(f'SELECT shopId FROM Favorite WHERE userId = {self.userId};')
         return [x[0] for x in tbl]  # shopIds
+
+    @property
+    def comments(self):
+        tbl = User.exe_query('SELECT commentId FROM Comment JOIN Invoice I on Comment.commentId = I.commentId '
+                             'JOIN Wallet W on I.walletId = W.walletId '
+                             f'WHERE W.userId = {self.userId};')
+        return [x[0] for x in tbl]  # commentIds

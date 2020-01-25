@@ -41,3 +41,6 @@ class Shop(Entity):
                             f'WHERE ABS(lat - {lat}) < 100 AND ABS(lon - {lon}) < 100;')
         for shop in tbl:
             yield Shop(shop[0])
+
+    def __str__(self):
+        return self.name

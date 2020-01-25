@@ -13,3 +13,6 @@ class Comment(Entity):
         cls.insert_tuple('Comment', ['rate', 'text'], [rate, text])
         tbl = Comment.select_tuples('Comment', ['rate', 'text'], [rate, text])
         return tbl[-1][0]  # commentId
+
+    def __str__(self):
+        return f'###\n{self.text}\n#\n#{self.rate}\n###'

@@ -35,3 +35,13 @@ class Invoice(Entity):
                                 'JOIN Invoice I on III.invoiceId = I.invoiceId '
                                 f'WHERE I.invoiceId = {self.invoiceId};')
         return sum(x[0] * (100 - x[1]) / 100 for x in tbl)  # TODO: Apply the Discount
+
+    def __str__(self):
+        from entities.address import Address
+        tbl = Invoice.exe_query('SELECT name FROM Food JOIN IsInInvoice III on Food.foodId = III.foodId '
+                                f'WHERE invoiceId = {self.invoiceId};')
+        part = '\n\t'.join(x[0] for x in tbl)
+        return f'''آدرس: {Address(self.addressId)}
+مبلغ کل: {self.cost}
+غذاها:
+\t{part}'''

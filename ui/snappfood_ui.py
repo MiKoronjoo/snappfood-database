@@ -326,14 +326,14 @@ class Ui_MainWindow(object):
         self.userInfoMenu.addAction(self.addressAct)
         self.menubar.addAction(self.userInfoMenu.menuAction())
         self.menubar.addAction(self.userPanelMenu.menuAction())
-
+        from entities import Invoice, Shop, Comment
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         self.infoAct.triggered.connect(self.show_infoWindow)
         self.addressAct.triggered.connect(self.show_addressWindow)
-        self.commentAct.triggered.connect(MainWindow.close)
-        self.ordersAct.triggered.connect(MainWindow.close)
-        self.resturantAct.triggered.connect(MainWindow.close)
+        self.commentAct.triggered.connect(lambda: [print(Comment(x)) for x in self.user.comments])
+        self.ordersAct.triggered.connect(lambda: [print(Invoice(x), '\n*****') for x in self.user.invoices])
+        self.resturantAct.triggered.connect(lambda: [print(Shop(x)) for x in self.user.favorite_shops])
         self.searchBT.clicked.connect(MainWindow.show)
         self.comboBox.activated['QString'].connect(MainWindow.show)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
