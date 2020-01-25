@@ -8,6 +8,125 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import entities
 import exception
 
+
+class Ui_addressWindow(object):
+    def add_adr(self):
+        self.user.add_address(self.CT[self.city.currentIndex()], self.lat.text(), self.lon.text(), self.st.text(),
+                              self.al.text(), self.pl.text())
+        self.back()
+
+    def rem_adr(self):
+        self.lon.setText('')
+        self.lat.setText('')
+        self.st.setText('')
+        self.al.setText('')
+        self.pl.setText('')
+
+    def back(self):
+        self.ui = Ui_MainWindow()
+        self.ui.user = self.user
+        self.ui.setupUi(LoginWindow)
+        LoginWindow.show()
+
+    def setupUi(self, addressWindow):
+        addressWindow.setObjectName("addressWindow")
+        addressWindow.resize(580, 410)
+        self.centralwidget = QtWidgets.QWidget(addressWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.addresses = QtWidgets.QComboBox(self.centralwidget)
+        self.addresses.setGeometry(QtCore.QRect(50, 50, 481, 25))
+        self.addresses.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.addresses.setObjectName("addresses")
+        self.city = QtWidgets.QComboBox(self.centralwidget)
+        self.city.setGeometry(QtCore.QRect(430, 210, 86, 25))
+        self.city.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.city.setObjectName("city")
+        self.st = QtWidgets.QLineEdit(self.centralwidget)
+        self.st.setGeometry(QtCore.QRect(300, 210, 113, 25))
+        self.st.setObjectName("st")
+        self.al = QtWidgets.QLineEdit(self.centralwidget)
+        self.al.setGeometry(QtCore.QRect(180, 210, 113, 25))
+        self.al.setObjectName("al")
+        self.pl = QtWidgets.QLineEdit(self.centralwidget)
+        self.pl.setGeometry(QtCore.QRect(120, 210, 51, 25))
+        self.pl.setObjectName("pl")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(340, 180, 67, 21))
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(220, 180, 67, 21))
+        self.label_2.setObjectName("label_2")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(100, 180, 67, 21))
+        self.label_3.setObjectName("label_3")
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setGeometry(QtCore.QRect(440, 180, 67, 21))
+        self.label_4.setObjectName("label_4")
+        self.addLB = QtWidgets.QCommandLinkButton(self.centralwidget)
+        self.addLB.setGeometry(QtCore.QRect(310, 280, 31, 41))
+        self.addLB.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.addLB.setText("")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("add.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.addLB.setIcon(icon)
+        self.addLB.setObjectName("addLB")
+        self.minusLB = QtWidgets.QCommandLinkButton(self.centralwidget)
+        self.minusLB.setGeometry(QtCore.QRect(270, 280, 31, 41))
+        self.minusLB.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.minusLB.setText("")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap("minus.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.minusLB.setIcon(icon1)
+        self.minusLB.setObjectName("minusLB")
+        self.lat = QtWidgets.QLineEdit(self.centralwidget)
+        self.lat.setGeometry(QtCore.QRect(440, 290, 71, 25))
+        self.lat.setObjectName("lat")
+        self.label_5 = QtWidgets.QLabel(self.centralwidget)
+        self.label_5.setGeometry(QtCore.QRect(330, 260, 171, 21))
+        self.label_5.setObjectName("label_5")
+        self.lon = QtWidgets.QLineEdit(self.centralwidget)
+        self.lon.setGeometry(QtCore.QRect(360, 290, 71, 25))
+        self.lon.setObjectName("lon")
+        self.backLB = QtWidgets.QCommandLinkButton(self.centralwidget)
+        self.backLB.setGeometry(QtCore.QRect(10, 320, 91, 41))
+        self.backLB.setObjectName("backLB")
+        addressWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(addressWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 580, 22))
+        self.menubar.setObjectName("menubar")
+        addressWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(addressWindow)
+        self.statusbar.setObjectName("statusbar")
+        addressWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(addressWindow)
+        self.addLB.clicked.connect(self.add_adr)
+        self.minusLB.clicked.connect(self.rem_adr)
+        self.backLB.clicked.connect(self.back)
+        QtCore.QMetaObject.connectSlotsByName(addressWindow)
+
+    def retranslateUi(self, addressWindow):
+        _translate = QtCore.QCoreApplication.translate
+        addressWindow.setWindowTitle(_translate("addressWindow", "آدرس‌ها"))
+        j = 0
+        for address in self.user.get_addresses():
+            self.addresses.addItem("")
+            self.addresses.setItemText(j, _translate("addressWindow", str(address)))
+            j += 1
+        self.CT = entities.City.get_cities()
+        i = 0
+        for cityId in self.CT:
+            self.city.addItem("")
+            self.city.setItemText(i, _translate("addressWindow", entities.City(cityId).name))
+            i += 1
+        self.label.setText(_translate("addressWindow", "خیابان"))
+        self.label_2.setText(_translate("addressWindow", "کوچه"))
+        self.label_3.setText(_translate("addressWindow", "پلاک"))
+        self.label_4.setText(_translate("addressWindow", "شهر"))
+        self.label_5.setText(_translate("addressWindow", "طول و عرض جغرافیایی"))
+        self.backLB.setText(_translate("addressWindow", "بازگشت"))
+
+
 class Ui_infoWindow(object):
     def show_MainWindow(self):
         self.ui = Ui_MainWindow()
@@ -118,6 +237,12 @@ class Ui_infoWindow(object):
 
 
 class Ui_MainWindow(object):
+    def show_addressWindow(self):
+        self.ui = Ui_addressWindow()
+        self.ui.user = self.user
+        self.ui.setupUi(LoginWindow)
+        LoginWindow.show()
+
     def show_infoWindow(self):
         self.ui = Ui_infoWindow()
         self.ui.user = self.user
@@ -205,7 +330,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         self.infoAct.triggered.connect(self.show_infoWindow)
-        self.addressAct.triggered.connect(MainWindow.close)
+        self.addressAct.triggered.connect(self.show_addressWindow)
         self.commentAct.triggered.connect(MainWindow.close)
         self.ordersAct.triggered.connect(MainWindow.close)
         self.resturantAct.triggered.connect(MainWindow.close)

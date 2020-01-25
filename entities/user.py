@@ -200,4 +200,8 @@ class User(Entity):
     def search_categories(self, name=''):
         tbl = User.exe_query("SELECT categoryId FROM Category "
                              f"WHERE name LIKE '%{name}%';")
-        return [x[0] for x in tbl]  # list of categoryId
+        return [x[0] for x in tbl]  # list of categoryIds
+
+    def favorite_shops(self):
+        tbl = User.exe_query(f'SELECT shopId FROM Favorite WHERE userId = {self.userId};')
+        return [x[0] for x in tbl]  # shopIds
