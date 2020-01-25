@@ -18,3 +18,11 @@ class Food(Entity):
                          [name, price, shopId, categoryId, about])
         tbl = cls.select_tuples('Food', ['name', 'shopId'], [name, shopId])
         return Food(tbl[-1][4])
+
+    def __str__(self):
+        from entities.shop import Shop
+        if self.discount:
+            part = f'{self.price} -> {self.price * (100 - self.discount) / 100}'
+        else:
+            part = str(self.price)
+        return f'{self.name}, {Shop(self.shopId)}, {part}'

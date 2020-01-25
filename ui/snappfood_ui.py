@@ -237,6 +237,18 @@ class Ui_infoWindow(object):
 
 
 class Ui_MainWindow(object):
+    def wadd(self, indx):
+        if self.now_addresses:
+            self.selected_address = self.now_addresses[indx]
+
+    def search(self):
+        foodIds = self.user.search_foods(self.searchText.text())
+        fText = '\n'.join(str(entities.Food(x)) for x in foodIds)
+        shopIds = self.user.search_shops(self.searchText.text(), self.selected_address)
+        sText = '\n'.join(str(entities.Shop(x)) for x in shopIds)
+        self.scrollArea1.setText(fText)
+        self.scrollArea2.setText(sText)
+
     def show_addressWindow(self):
         self.ui = Ui_addressWindow()
         self.ui.user = self.user
@@ -250,6 +262,7 @@ class Ui_MainWindow(object):
         LoginWindow.show()
 
     def setupUi(self, MainWindow):
+        self.selected_address = None
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
         icon = QtGui.QIcon()
@@ -276,25 +289,23 @@ class Ui_MainWindow(object):
         self.tabWidget.setObjectName("tabWidget")
         self.food = QtWidgets.QWidget()
         self.food.setObjectName("food")
-        self.scrollArea1 = QtWidgets.QScrollArea(self.food)
+        self.scrollArea1 = QtWidgets.QLabel(self.food)  # FLAG
         self.scrollArea1.setGeometry(QtCore.QRect(10, 10, 391, 211))
-        self.scrollArea1.setWidgetResizable(True)
         self.scrollArea1.setObjectName("scrollArea1")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 389, 209))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.scrollArea1.setWidget(self.scrollAreaWidgetContents)
+        # self.scrollArea1.setWidget(self.scrollAreaWidgetContents)
         self.tabWidget.addTab(self.food, "")
         self.resturant = QtWidgets.QWidget()
         self.resturant.setObjectName("resturant")
-        self.scrollArea2 = QtWidgets.QScrollArea(self.resturant)
+        self.scrollArea2 = QtWidgets.QLabel(self.resturant)  # FLAG
         self.scrollArea2.setGeometry(QtCore.QRect(10, 10, 391, 211))
-        self.scrollArea2.setWidgetResizable(True)
         self.scrollArea2.setObjectName("scrollArea2")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 389, 209))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
-        self.scrollArea2.setWidget(self.scrollAreaWidgetContents_2)
+        # self.scrollArea2.setWidget(self.scrollAreaWidgetContents_2)
         self.tabWidget.addTab(self.resturant, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -334,8 +345,8 @@ class Ui_MainWindow(object):
         self.commentAct.triggered.connect(lambda: [print(Comment(x)) for x in self.user.comments])
         self.ordersAct.triggered.connect(lambda: [print(Invoice(x), '\n*****') for x in self.user.invoices])
         self.resturantAct.triggered.connect(lambda: [print(Shop(x)) for x in self.user.favorite_shops])
-        self.searchBT.clicked.connect(MainWindow.show)
-        self.comboBox.activated['QString'].connect(MainWindow.show)
+        self.searchBT.clicked.connect(self.search)
+        self.comboBox.activated['int'].connect(self.wadd)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -343,9 +354,11 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "سفارش آنلاین غذا | اسنپ‌فود"))
         self.searchBT.setText(_translate("MainWindow", "جستجو"))
         i = 0
+        self.now_addresses = []
         for address in self.user.get_addresses():
             self.comboBox.addItem("")
             self.comboBox.setItemText(i, _translate("MainWindow", str(address)))
+            self.now_addresses.append(address.addressId)
             i += 1
         if i == 0:
             self.comboBox.addItem("")
