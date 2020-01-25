@@ -236,12 +236,128 @@ class Ui_infoWindow(object):
         self.backLB.setText(_translate("infoWindow", "بازگشت"))
 
 
+class Ui_ShopWindow(object):
+    def dn(self):
+        # entities.User(self.userId).finalize_the_purchase()
+        self.message.setText('سفارش با موفقیت ثبت شد')
+
+    def back(self):
+        self.ui = Ui_MainWindow()
+        self.ui.user = self.user
+        self.ui.setupUi(LoginWindow)
+        LoginWindow.show()
+
+    def prev(self):
+        self.ui = Ui_ShopWindow()
+        self.ui.user = self.user
+        self.ui.shopId = self.shopId
+        self.ui.prv = True
+        self.ui.setupUi(LoginWindow)
+        LoginWindow.show()
+
+    def all(self):
+        self.ui = Ui_ShopWindow()
+        self.ui.user = self.user
+        self.ui.shopId = self.shopId
+        self.ui.prv = False
+        self.ui.setupUi(LoginWindow)
+        LoginWindow.show()
+
+    def setupUi(self, ShopWindow):
+        ShopWindow.setObjectName("ShopWindow")
+        ShopWindow.resize(800, 600)
+        self.centralwidget = QtWidgets.QWidget(ShopWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.info = QtWidgets.QTextBrowser(self.centralwidget)
+        self.info.setGeometry(QtCore.QRect(20, 20, 751, 101))
+        self.info.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.info.setObjectName("info")
+        self.info.setText(str(entities.Shop(self.shopId)))
+        self.backLB = QtWidgets.QCommandLinkButton(self.centralwidget)
+        self.backLB.setGeometry(QtCore.QRect(20, 500, 81, 41))
+        self.backLB.setObjectName("backLB")
+        self.preBT = QtWidgets.QPushButton(self.centralwidget)
+        self.preBT.setGeometry(QtCore.QRect(120, 150, 111, 25))
+        self.preBT.setObjectName("preBT")
+        self.dnBT = QtWidgets.QPushButton(self.centralwidget)
+        self.dnBT.setGeometry(QtCore.QRect(118, 200, 111, 25))
+        self.dnBT.setObjectName("dnBT")
+        self.message = QtWidgets.QLabel(self.centralwidget)
+        self.message.setGeometry(QtCore.QRect(20, 320, 331, 61))
+        self.message.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.message.setText("")
+        self.message.setAlignment(QtCore.Qt.AlignCenter)
+        self.message.setObjectName("message")
+        ShopWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(ShopWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
+        self.menubar.setObjectName("menubar")
+        ShopWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(ShopWindow)
+        self.statusbar.setObjectName("statusbar")
+        ShopWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(ShopWindow)
+        QtCore.QMetaObject.connectSlotsByName(ShopWindow)
+
+    def retranslateUi(self, ShopWindow):
+        _translate = QtCore.QCoreApplication.translate
+        ShopWindow.setWindowTitle(_translate("ShopWindow", "صفحه‌ی فروشگاه"))
+        i = 0
+        if not self.prv:
+            for x in entities.Shop(self.shopId).foods:
+                self.label = QtWidgets.QLabel(self.centralwidget)
+                self.label.setGeometry(QtCore.QRect(400, 150 + i * 30, 321, 21))
+                self.label.setLayoutDirection(QtCore.Qt.RightToLeft)
+                self.label.setText(_translate("ShopWindow", str(x)))
+                self.label.setObjectName(f"label{i}")
+                self.spinBox = QtWidgets.QSpinBox(self.centralwidget)
+                self.spinBox.setGeometry(QtCore.QRect(730, 150 + i * 30, 48, 26))
+                self.spinBox.setLayoutDirection(QtCore.Qt.LeftToRight)
+                self.spinBox.setObjectName(f"spinBox{i}")
+                i += 1
+        else:
+            for f in self.user.previous_foods(self.shopId):
+                x = entities.Food(f)
+                self.label = QtWidgets.QLabel(self.centralwidget)
+                self.label.setGeometry(QtCore.QRect(400, 150 + i * 30, 321, 21))
+                self.label.setLayoutDirection(QtCore.Qt.RightToLeft)
+                self.label.setText(_translate("ShopWindow", str(x)))
+                self.label.setObjectName(f"label{i}")
+                self.spinBox = QtWidgets.QSpinBox(self.centralwidget)
+                self.spinBox.setGeometry(QtCore.QRect(730, 150 + i * 30, 48, 26))
+                self.spinBox.setLayoutDirection(QtCore.Qt.LeftToRight)
+                self.spinBox.setObjectName(f"spinBox{i}")
+                i += 1
+        self.backLB.setText(_translate("ShopWindow", "بازگشت"))
+        self.dnBT.setText(_translate("ShopWindow", "ثبت سفارش"))
+        self.backLB.clicked.connect(self.back)
+        self.dnBT.clicked.connect(self.dn)
+        if not self.prv:
+            self.preBT.setText(_translate("ShopWindow", "سفارش‌های قبل"))
+            self.preBT.clicked.connect(self.prev)
+        else:
+            self.preBT.setText(_translate("ShopWindow", "همه‌ی غذاها"))
+            self.preBT.clicked.connect(self.all)
+
+
 class Ui_MainWindow(object):
+    def show_shopWindow(self, shopId):
+        self.ui = Ui_ShopWindow()
+        self.ui.user = self.user
+        self.ui.shopId = shopId
+        self.ui.prv = False
+        self.ui.setupUi(LoginWindow)
+        LoginWindow.show()
+
     def wadd(self, indx):
         if self.now_addresses:
             self.selected_address = self.now_addresses[indx]
 
     def search(self):
+        if self.searchText.text().isdigit():
+            self.show_shopWindow(self.searchText.text())
+            return
         foodIds = self.user.search_foods(self.searchText.text())
         fText = '\n'.join(str(entities.Food(x)) for x in foodIds)
         shopIds = self.user.search_shops(self.searchText.text(), self.selected_address)

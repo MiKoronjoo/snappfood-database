@@ -43,4 +43,4 @@ class Shop(Entity):
             yield Shop(shop[0])
 
     def __str__(self):
-        return self.name
+        return f'{self.name}, {self.shopId}'

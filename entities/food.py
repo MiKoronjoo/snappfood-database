@@ -25,4 +25,4 @@ class Food(Entity):
             part = f'{self.price} -> {self.price * (100 - self.discount) / 100}'
         else:
             part = str(self.price)
-        return f'{self.name}, {Shop(self.shopId)}, {part}'
+        return f'{self.name}, {Shop(self.shopId)}, {part}, {self.shopId}'

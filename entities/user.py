@@ -209,7 +209,7 @@ class User(Entity):
 
     @property
     def comments(self):
-        tbl = User.exe_query('SELECT commentId FROM Comment JOIN Invoice I on Comment.commentId = I.commentId '
+        tbl = User.exe_query('SELECT Comment.commentId FROM Comment JOIN Invoice I on Comment.commentId = I.commentId '
                              'JOIN Wallet W on I.walletId = W.walletId '
                              f'WHERE W.userId = {self.userId};')
         return [x[0] for x in tbl]  # commentIds
