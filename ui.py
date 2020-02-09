@@ -3,6 +3,8 @@
 # Created by: PyQt5 UI code generator 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
+import sys
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import entities
@@ -578,12 +580,9 @@ def signup():
         ui.message.setText('فرمت شماره همراه اشتباه است')
 
 
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    LoginWindow = QtWidgets.QMainWindow()
-    ui = Ui_LoginWindow()
-    ui.setupUi(LoginWindow)
-    LoginWindow.show()
-    sys.exit(app.exec_())
+app = QtWidgets.QApplication(sys.argv)
+LoginWindow = QtWidgets.QMainWindow()
+ui = Ui_LoginWindow()
+ui.setupUi(LoginWindow)
+LoginWindow.show()
+sys.exit(app.exec_())

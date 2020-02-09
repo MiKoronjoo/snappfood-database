@@ -1,7 +1,7 @@
 import sqlite3
 from typing import List
 
-DB_PATH = '../db.sqlite'
+DB_PATH = 'db.sqlite'
 DBTuple = List[str]
 
 
