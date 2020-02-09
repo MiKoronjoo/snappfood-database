@@ -182,7 +182,7 @@ class User(Entity):
             af = f' AND ABS(lat - {loc.lat}) < 100 AND ABS(lon - {loc.lon}) < 100'
         if categoryId is not None:
             cf = f' AND C.categoryId = {categoryId}'
-        tbl = User.exe_query("SELECT S.shopId FROM Shop S JOIN Address A ON S.addressId = A.addressId "
+        tbl = User.exe_query("SELECT DISTINCT S.shopId FROM Shop S JOIN Address A ON S.addressId = A.addressId "
                              "JOIN Location L ON A.locationId = L.locationId "
                              "JOIN Food F On S.shopId = F.shopId "
                              "JOIN Category C ON F.categoryId = C.categoryId "
